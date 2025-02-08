@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will You Be Mine?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden;
+            padding: 10px;
+        }
+        h1 {
+            font-size: 2rem;
+        }
+        p {
+            font-size: 1.2rem;
+            max-width: 90%;
+        }
+        img {
+            width: 80%;
+            max-width: 320px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        .btn {
+            padding: 12px 25px;
+            margin: 10px;
+            font-size: 18px;
+            border: none;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .btn:active {
+            transform: scale(0.9);
+        }
+        .yes {
+            background-color: green;
+            color: white;
+        }
+        .no {
+            background-color: rgb(11, 10, 10);
+            color: white;
+            position: absolute;
+        }
+        .fireworks, .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .heart {
+            position: absolute;
+            font-size: 24px;
+            animation: float 5s linear infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            p {
+                font-size: 1rem;
+            }
+            .btn {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>I Like You!!! Will you be my mine forever?</h1>
+    <p>From the moment I met you, I knew you were special. 💖</p>
+    <img src="Aarambh Core Members 20241123_000255.jpg" alt="Proposal">
+    <br>
+    <button class="btn yes" onclick="showLove()">Yes 💖</button>
+    <button class="btn no" onmouseover="moveButton(this)">No ❌</button>
+    <p id="message" style="display:none; font-size: 24px; color: rgb(0, 0, 0); margin-top: 20px;"></p>
+    <audio id="song" src="aajset_ef0aed9c5428881.mp3"></audio>
+    <canvas class="fireworks" id="fireworks"></canvas>
+    <div class="hearts" id="hearts"></div>
+
+    <script>
+        function showLove() {
+            let name = prompt("Aapka naam kya hai? 💖");
+            if (!name) {
+                alert("Naam dalna zaroori hai!");
+                return;
+            }
+            document.getElementById('message').innerText = `Yay! ${name}, You said YES! Now you are my property 🎉💍`;
+            document.getElementById('message').style.display = 'block';
+            document.getElementById('song').play();
+            showFireworks();
+            showHearts();
+            sendTelegramMessage(name);
+        }
+
+        function moveButton(btn) {
+            let x = Math.random() * (window.innerWidth - btn.clientWidth);
+            let y = Math.random() * (window.innerHeight - btn.clientHeight);
+            btn.style.left = `${x}px`;
+            btn.style.top = `${y}px`;
+        }
+
+        function showFireworks() {
+            const canvas = document.getElementById("fireworks");
+            canvas.style.display = "block";
+            const ctx = canvas.getContext("2d");
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            let particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    radius: Math.random() * 5 + 2,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    speedX: Math.random() * 4 - 2,
+                    speedY: Math.random() * 4 - 2
+                });
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.fill();
+                    p.x += p.speedX;
+                    p.y += p.speedY;
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        function showHearts() {
+            const heartContainer = document.getElementById("hearts");
+            function createHeart() {
+                let heart = document.createElement("div");
+                heart.classList.add("heart");
+                heart.innerHTML = "❤️";
+                heart.style.left = Math.random() * 100 + "vw";
+                heart.style.bottom = "-20px";
+                heart.style.animationDuration = (Math.random() * 3 + 2) + "s";
+                heartContainer.appendChild(heart);
+                setTimeout(() => heart.remove(), 5000);
+            }
+            setInterval(createHeart, 200);
+        }
+
+        function sendTelegramMessage(name) { 
+            let chatId = "5026193777";
+            let botToken = "7965022082:AAFgsuY8zW-kmm1XKwiC9_0-zlQv3vMWP-w";
+            let message = `${name} said YES! 🎉💖`;
+            let url = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
+            fetch(url).catch(error => console.error("Error sending message:", error));
+        }
+    </script>
+</body>
+</html>
